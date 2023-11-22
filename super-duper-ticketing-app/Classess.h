@@ -4,7 +4,27 @@
 #include <string.h>
 using namespace std;
 
+enum EventType { CONCERT, STAND_UP, FOOTBALL, BASEBALL, MOVIE, THEATER_PLAY, CONFERENCE };
 enum LocationType { MOVIE_THEATER = 200, THEATER = 300, CONFERENCE_HALL = 450, STAGE = 800, STADIUM = 1000, ARENA = 3000 };
+
+class WrongDateFormatException {
+
+};
+
+class Event{
+	string date = "";
+	EventType type;
+	EventLocation location;
+	string* starsOfTheShow = nullptr;
+	int noStarsOfTheShow = 0;
+public:
+	void setDate(string newDate) {
+		if (newDate[2] != '/' || newDate[5] != '/' || newDate.size() != 10) {
+			throw WrongDateFormatException();
+		}
+		this->date = newDate;
+	}
+};
 
 class EventLocation {
 	char* venueName = nullptr;

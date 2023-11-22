@@ -4,6 +4,18 @@
 using namespace std;
 
 enum LocationType { MOVIE_THEATER = 200, THEATER = 300, CONFERENCE_HALL = 450, STAGE = 800, STADIUM = 1000, ARENA = 3000 };
+enum EventType { CONCERT, STAND_UP, FOOTBALL, BASEBALL, MOVIE, THEATER_PLAY, CONFERENCE };
+
+class WrongDateFormatException {
+
+};
+class WrongNameException : public exception {
+public:
+	WrongNameException(string msg) :exception(msg.c_str()) 
+	{
+
+	}
+};
 
 class EventLocation {
 	char* venueName = nullptr;
@@ -131,5 +143,73 @@ public:
 		}
 	}
 };
+
+
+class Event {
+	string date = "";
+	EventType type;
+	EventLocation location;
+	string* starsOfTheShow = nullptr;
+	int noStarsOfTheShow = 0;
+public:
+	static int MIN_NAME_LENGTH;
+
+	void setDate(string newDate) {
+		if (newDate[2] != '/' || newDate[5] != '/' || newDate.size() != 10) {
+			throw WrongDateFormatException();
+		}
+		this->date = newDate;
+	}
+
+	//getters
+	string getDate() {
+		return this->date;
+	}
+	int getNoStarsOfTheShow() {
+		return this->noStarsOfTheShow;
+	}
+	string* getStarsOfTheShow() {
+		string* copy = new string[this->noStarsOfTheShow];
+		for (int i = 0; i < this->noStarsOfTheShow; i++) {
+			copy[i] = starsOfTheShow[i];
+		}
+		return copy;
+	}
+	EventType getEventType() {
+		return this->type;
+	}
+	EventLocation getEventLocation() {
+		return this->location;
+	}
+	
+	//setters
+	void setNoStarsOfTheShow(int number) {
+		this->noStarsOfTheShow = number;
+	}
+	void setStarsOfTheShow(string name) {
+		if (name.size() < MIN_NAME_LENGTH) {
+			throw WrongNameException("Name is too short!");
+		}
+		string* newList = new string[this->noStarsOfTheShow = 1];
+		for (int i = 0; i < this->noStarsOfTheShow;i++) {
+			newList[i] = this->starsOfTheShow[i];
+		}
+		delete[] this->starsOfTheShow;
+		this->starsOfTheShow = newList;
+		this->starsOfTheShow[this->noStarsOfTheShow] = name;
+		this->noStarsOfTheShow += 1;
+	}
+	void setEventType()
+
+
+	//copy constructor
+
+
+	//destructor
+
+
+	//operators
+};
+
 int EventLocation::MIN_NAME_LENGTH = 5;
 int EventLocation::MAX_NAME_LENGTH = 30;
