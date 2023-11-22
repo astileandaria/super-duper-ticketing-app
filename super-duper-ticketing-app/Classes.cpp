@@ -199,7 +199,12 @@ public:
 		this->starsOfTheShow[this->noStarsOfTheShow] = name;
 		this->noStarsOfTheShow += 1;
 	}
-	void setEventType()
+	void setEventType(EventType type) {
+		this->type = type;
+	}
+	void setEventLocation(EventLocation location) {
+		this->location = location;
+	}
 
 
 	//copy constructor
