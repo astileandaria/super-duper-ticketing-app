@@ -206,7 +206,6 @@ public:
 		this->location = location;
 	}
 
-
 	//copy constructor
 
 
