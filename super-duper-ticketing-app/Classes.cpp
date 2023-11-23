@@ -24,9 +24,9 @@ class EventLocation {
 	int noSeatsPerRow = 0;
 	LocationType type = LocationType::THEATER;
 
-	int* availableSeatsOnRow = nullptr;
-	int noAvailableSeatsOnRow = 0;
-	int** availableSeats = nullptr; //array of pointers to each int* availableSeatsOnRow; noElements = noRows
+	//int* availableSeatsOnRow = nullptr;
+	//int noAvailableSeatsOnRow = 0;
+	//int** availableSeats = nullptr; //array of pointers to each int* availableSeatsOnRow; noElements = noRows
 
 public:
 	//statics
@@ -59,7 +59,7 @@ public:
 	int getNoSeatsPerRow() {
 		return this->noSeatsPerRow;
 	}
-	int getNoAvailableSeatsOnRow() {
+	/*int getNoAvailableSeatsOnRow() {
 		return this->noAvailableSeatsOnRow;
 	}
 	int** getAvailableSeats() {
@@ -78,8 +78,8 @@ public:
 			copy[i] = availableSeatsOnRow[i];
 		}
 		return copy;
-	}
-	string getLocationTypeName() {	//so we can see the actual names instead of the associated numbers
+	}*/
+	string getLocationTypeName(LocationType type) {	//so we can see the actual names instead of the associated numbers
 		switch (this->type)
 		{
 		case MOVIE_THEATER:
@@ -122,27 +122,51 @@ public:
 			strcpy_s(this->venueName, strlen(name) + 1, name);
 		}
 	}
-	void setInitialAvailableSeats(int* const availableSeatsOnRow, int** availableSeats) {
-		//if (someAvailableSeats == nullptr) {
-		//	throw exception("No more available seats!");
-		//}
-		if (this->availableSeatsOnRow != nullptr) {
-			delete[]availableSeatsOnRow;
-		}
-		if (this->availableSeats != nullptr) {
-			delete[]availableSeats;
-		}
-		this->availableSeatsOnRow = new int[this->noSeatsPerRow];
-		this->availableSeats = new int* [this->noRows];
+	//void setInitialAvailableSeats(int* const availableSeatsOnRow, int** availableSeats) {
+	//	//if (someAvailableSeats == nullptr) {
+	//	//	throw exception("No more available seats!");
+	//	//}
+	//	if (this->availableSeatsOnRow != nullptr) {
+	//		delete[]availableSeatsOnRow;
+	//	}
+	//	if (this->availableSeats != nullptr) {
+	//		delete[]availableSeats;
+	//	}
+	//	this->availableSeatsOnRow = new int[this->noSeatsPerRow];
+	//	this->availableSeats = new int* [this->noRows];
 
-		for (int j = 0; j < this->noRows; j++) { //populating the array of pointers toeach row
-			for (int i = 0; i < this->noSeatsPerRow; i++) {	//populating each row with its corresponding seat numbers
-				this->availableSeatsOnRow[i] = i + 1; //the seat numbers start from 1 
-			}
-			this->availableSeats[j] = &this->availableSeatsOnRow[j];
+	//	for (int j = 0; j < this->noRows; j++) { //populating the array of pointers toeach row
+	//		for (int i = 0; i < this->noSeatsPerRow; i++) {	//populating each row with its corresponding seat numbers
+	//			this->availableSeatsOnRow[i] = i + 1; //the seat numbers start from 1 
+	//		}
+	//		this->availableSeats[j] = &this->availableSeatsOnRow[j];
+	//	}
+	//}
+
+	//copy constructor
+	EventLocation(const EventLocation& object) {
+		this->venueName = new char[strlen(object.venueName) + 1];
+		for (int i = 0; i < strlen(object.venueName) + 1; i++) {
+			this->venueName[i] = object.venueName[i];
 		}
 	}
+
+	//destructor
+	~EventLocation() {
+		delete[]this->venueName;
+	}
+
+	//operators
+
+	friend void operator<<(ostream& console, EventLocation& eventLocation);
 };
+
+void operator<<(ostream& console, EventLocation& eventLocation) {
+	console << endl << "Location name: " << eventLocation.name;
+	console << endl << "Event type is: " << eventLocation.getEventLocationTypeName(type);
+	console << endl << "Number of rows: "<< eventLocation.noRows;
+	console << endl << "Number of seatsPerRow: " << eventLocation.getNoSeatsPerRow;
+}
 
 
 class Event {
@@ -183,6 +207,27 @@ public:
 	}
 	
 	//setters
+
+	string getEventTypeName(EventType type) {	//so we can see the actual names instead of the associated numbers
+		switch (this->type)
+		{
+		case CONCERT:
+			return "Concert";
+		case STAND_UP:
+			return "Stand up";
+		case FOOTBALL:
+			return "Football";
+		case BASEBALL:
+			return "Baseball";
+		case MOVIE:
+			return "Movie";
+		case THEATER_PLAY:
+			return "Theater play";
+		case CONFERENCE:
+			return "Conference";
+		}
+	}
+
 	void setNoStarsOfTheShow(int number) {
 		this->noStarsOfTheShow = number;
 	}
@@ -207,13 +252,34 @@ public:
 	}
 
 	//copy constructor
-
+	Event(const Event& object){
+		this->starsOfTheShow = new string[object.noStarsOfTheShow];
+		for (int i = 0; i < object.noStarsOfTheShow; i++) {
+			this->starsOfTheShow[i] = object.starsOfTheShow[i];
+		}
+		this->noStarsOfTheShow = object.noStarsOfTheShow;
+	}
 
 	//destructor
-
+	~Event() {
+		delete[]this->starsOfTheShow;
+	}
 
 	//operators
+
+	friend void operator<<(ostream& console, Event& event);
 };
+
+void operator<<(ostream& console, Event& event) {
+	console << endl << "Event date: " << event.date;
+	console << endl << "Event type is: " << event.getEventTypeName(type);
+	console << endl << "The star(s) of the show is/are: ";
+	for (int i = 0; i < event.noStarsOfTheShow;i++) {
+		console << " " << event.starsOfTheShow[i];
+	}
+}
+
+
 
 int EventLocation::MIN_NAME_LENGTH = 5;
 int EventLocation::MAX_NAME_LENGTH = 30;
