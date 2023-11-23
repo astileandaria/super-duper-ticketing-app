@@ -33,6 +33,13 @@ public:
 	static int MIN_NAME_LENGTH;
 	static int MAX_NAME_LENGTH;
 
+	//other methods
+	int calculateTotalNoSeats() {
+		int total = 0;
+		total = this->noRows * this->noSeatsPerRow;
+		return total;
+	}
+
 	//constructors
 	EventLocation() {
 
@@ -101,6 +108,7 @@ public:
 	}
 
 	//setters
+	
 	void setMaxNoSeats(LocationType type) {
 		this->maxNoSeats = (int)type;
 	}
@@ -158,14 +166,25 @@ public:
 
 	//operators
 
+	bool operator==(EventLocation object) {
+		if (object.calculateTotalNoSeats() == this->calculateTotalNoSeats()) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
 	friend void operator<<(ostream& console, EventLocation& eventLocation);
 };
 
+
+
 void operator<<(ostream& console, EventLocation& eventLocation) {
-	console << endl << "Location name: " << eventLocation.name;
-	console << endl << "Event type is: " << eventLocation.getEventLocationTypeName(type);
+	console << endl << "Location name: " << eventLocation.venueName;
+	console << endl << "Event type is: " << eventLocation.getLocationTypeName(eventLocation.type);
 	console << endl << "Number of rows: "<< eventLocation.noRows;
-	console << endl << "Number of seatsPerRow: " << eventLocation.getNoSeatsPerRow;
+	console << endl << "Number of seatsPerRow: " << eventLocation.noSeatsPerRow;
 }
 
 
@@ -180,6 +199,18 @@ public:
 
 	void setDate(string newDate) {
 		if (newDate[2] != '/' || newDate[5] != '/' || newDate.size() != 10) {
+			throw WrongDateFormatException();
+		}
+		if (newDate[0] < '0' || newDate[0]>'3') {
+			throw WrongDateFormatException();
+		}
+		if (newDate[1] < '0' || newDate[1] > '9') {
+			throw WrongDateFormatException();
+		}
+		if (newDate[3] < '0' || newDate[3]>'1') {
+			throw WrongDateFormatException();
+		}
+		if (newDate[4] < '1' || newDate[4]>'9') {
 			throw WrongDateFormatException();
 		}
 		this->date = newDate;
@@ -267,12 +298,16 @@ public:
 
 	//operators
 
+	bool operator >=(Event object) {
+		if()
+	}
+
 	friend void operator<<(ostream& console, Event& event);
 };
 
 void operator<<(ostream& console, Event& event) {
 	console << endl << "Event date: " << event.date;
-	console << endl << "Event type is: " << event.getEventTypeName(type);
+	console << endl << "Event type is: " << event.getEventTypeName(event.type);
 	console << endl << "The star(s) of the show is/are: ";
 	for (int i = 0; i < event.noStarsOfTheShow;i++) {
 		console << " " << event.starsOfTheShow[i];
