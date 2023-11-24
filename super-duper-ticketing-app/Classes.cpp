@@ -5,6 +5,7 @@ using namespace std;
 
 enum LocationType { MOVIE_THEATER = 200, THEATER = 300, CONFERENCE_HALL = 450, STAGE = 800, STADIUM = 1000, ARENA = 3000 };
 enum EventType { CONCERT, STAND_UP, FOOTBALL, BASEBALL, MOVIE, THEATER_PLAY, CONFERENCE };
+enum Zones { VIP, NORMAL, STAND1, STAND2, TRIBUNE, CATEGORY1, CATEGORY2, BOX, STANDING };
 
 class WrongDateFormatException: public exception {
 public:
@@ -187,8 +188,6 @@ public:
 	friend void operator<<(ostream& console, EventLocation& eventLocation);
 };
 
-
-
 void operator<<(ostream& console, EventLocation& eventLocation) {
 	console << endl << "Location name: " << eventLocation.venueName;
 	console << endl << "Event type is: " << eventLocation.getLocationTypeName(eventLocation.type);
@@ -232,14 +231,6 @@ public:
 		}
 		return copy;
 	}
-	EventType getEventType() {
-		return this->type;
-	}
-	EventLocation getEventLocation() {
-		return this->location;
-	}
-
-	//setters
 
 	string getEventTypeName(EventType type) {	//so we can see the actual names instead of the associated numbers
 		switch (this->type)
@@ -260,6 +251,16 @@ public:
 			return "Conference";
 		}
 	}
+	EventType getEventType() {
+		return this->type;
+	}
+	EventLocation getEventLocation() {
+		return this->location;
+	}
+
+	//setters
+
+
 
 	void setNoStarsOfTheShow(int number) {
 		this->noStarsOfTheShow = number;
@@ -332,6 +333,159 @@ void operator<<(ostream& console, Event& event) {
 		console << " " << event.starsOfTheShow[i];
 	}
 }
+
+
+
+class Ticket {
+	int id = 0;
+	int seatNumber = 1;
+	int rowNumber = 0;
+	EventLocation location;
+	Zones zone = Zones::NORMAL;
+
+	int* usedIds = nullptr;		//to keep track of already used ID's & ensure uniqueness of new ID's
+	int noUsedIds = 0;
+
+public:
+	//constructors
+	Ticket() {
+	}
+	Ticket(int id, int seatNumber, int rowNumber, const char* venueName, LocationType type, Zones zone)
+		:id(id), seatNumber(seatNumber), rowNumber(rowNumber), location(venueName, type), zone(zone) {
+
+	}
+	Ticket(const Ticket& ticket) : id(ticket.id), seatNumber(ticket.seatNumber), rowNumber(ticket.rowNumber), location(ticket.location), zone(ticket.zone) {
+
+	}
+
+	//getters
+	int getId() {
+		return this->id;
+	}
+	int getSeatNumber() {
+		return this->seatNumber;
+	}
+	int getRowNumber() {
+		return this->rowNumber;
+	}
+	EventLocation getEventLocation() {
+		return this->location;
+	}
+
+	string getZoneName(Zones zone) {	//so we can see the actual names instead of the associated numbers
+		switch (this->zone)
+		{
+		case VIP:
+			return "VIP";
+		case NORMAL:
+			return "Normal";
+		case STAND1:
+			return "Stand 1";
+		case STAND2:
+			return "Stand 2";
+		case TRIBUNE:
+			return "Tribune";
+		case CATEGORY1:
+			return "Category 1";
+		case CATEGORY2:
+			return "Category 2";
+		case BOX:
+			return "Box";
+		case STANDING:
+			return "Standing";
+		}
+	}
+	Zones getZone() {
+		return this->zone;
+	}
+
+	//setters
+	void setZone(Zones zone) {
+		this->zone = zone;
+	}
+	void setSeatNumber(int seatNumber) {
+		if (seatNumber <= 0 || seatNumber > 50) {
+			throw exception("The seat number is not valid!");
+		}
+		else {
+			this->seatNumber = seatNumber;
+		}
+	}
+	void setRowNumber(int rowNumber) {
+		if (rowNumber < 0 || rowNumber > 100) {
+			throw exception("The row number is not valid!");
+		}
+		else {
+			this->rowNumber = rowNumber;
+		}
+	}
+
+	int checkIdUniqueness(int k) {
+		int ok = 1;
+		for (int i = 0; i < this->noUsedIds;i++) {
+			if (k == usedIds[i]) {
+				ok = -1;
+			}
+		}
+		return ok;
+	}
+
+	void setId() {
+		int k = rand() % 1000000;
+		while (checkIdUniqueness(k) == -1) {
+			k = rand() % 1000000;
+		}
+		usedIds[noUsedIds++] = k;
+		this->id = k;
+	}
+
+	//copy constructor
+	Ticket(const Ticket& object) {
+		this->usedIds = new int[object.noUsedIds];
+		for (int i = 0; i < object.noUsedIds; i++) {
+			this->usedIds[i] = object.usedIds[i];
+		}
+		this->noUsedIds = object.noUsedIds;
+	}
+
+	//destructor
+	~Ticket() {
+		delete[]this->usedIds;
+	}
+
+	//operators
+
+	friend void operator<<(ostream& console, Ticket& ticket);
+};
+
+void operator<<(ostream& console, Ticket& ticket) {
+	console << endl << "Ticket ID: " << ticket.id;
+	console << endl << "Row number is: " << ticket.rowNumber;
+	console << endl << "Seat number is " << ticket.seatNumber;
+	console << endl << "Zone is: " << ticket.getZoneName(ticket.zone);
+	console << endl << "Location is: " << ticket.location;
+}
+
+/*
+bool isValid = true;
+	do { //the user will be in this loop until they insert correct values
+		isValid = true;
+		cout << endl << "Product price: ";
+		cin >> price;
+		if (price < Product::MIN_PRICE) {
+			cout << endl << "Wrong price";
+			isValid = false;
+		}
+		cout << endl << "Product name: ";
+		cin >> name;
+		if (strlen(name) < Product::MIN_NAME_LENGTH) {
+			cout << endl << "Wrong name";
+			isValid = false;
+		}
+		cout << endl << "Product manufacturer: ";
+		cin >> manufacturer;
+	} while (!isValid);
+*/
 
 
 
