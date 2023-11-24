@@ -236,7 +236,7 @@ public:
 	EventLocation getEventLocation() {
 		return this->location;
 	}
-	
+
 	//setters
 
 	string getEventTypeName(EventType type) {	//so we can see the actual names instead of the associated numbers
@@ -283,7 +283,7 @@ public:
 	}
 
 	//copy constructor
-	Event(const Event& object){
+	Event(const Event& object) {
 		this->starsOfTheShow = new string[object.noStarsOfTheShow];
 		for (int i = 0; i < object.noStarsOfTheShow; i++) {
 			this->starsOfTheShow[i] = object.starsOfTheShow[i];
@@ -299,7 +299,7 @@ public:
 	//operators
 
 	bool operator >=(Event object) {
-		if()
+		if ()
 	}
 
 	friend void operator<<(ostream& console, Event& event);

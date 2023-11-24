@@ -10,19 +10,11 @@ enum LocationType { MOVIE_THEATER = 200, THEATER = 300, CONFERENCE_HALL = 450, S
 class WrongDateFormatException {
 
 };
-
-class Event{
-	string date = "";
-	EventType type;
-	EventLocation location;
-	string* starsOfTheShow = nullptr;
-	int noStarsOfTheShow = 0;
+class WrongNameException : public exception {
 public:
-	void setDate(string newDate) {
-		if (newDate[2] != '/' || newDate[5] != '/' || newDate.size() != 10) {
-			throw WrongDateFormatException();
-		}
-		this->date = newDate;
+	WrongNameException(string msg) :exception(msg.c_str())
+	{
+
 	}
 };
 
@@ -152,5 +144,134 @@ public:
 		}
 	}
 };
+
+class Event {
+	string date = "";
+	EventType type;
+	EventLocation location;
+	string* starsOfTheShow = nullptr;
+	int noStarsOfTheShow = 0;
+public:
+	static int MIN_NAME_LENGTH;
+
+	void setDate(string newDate) {
+		if (newDate[2] != '/' || newDate[5] != '/' || newDate.size() != 10) {
+			throw WrongDateFormatException();
+		}
+		if (newDate[0] < '0' || newDate[0]>'3') {
+			throw WrongDateFormatException();
+		}
+		if (newDate[1] < '0' || newDate[1] > '9') {
+			throw WrongDateFormatException();
+		}
+		if (newDate[3] < '0' || newDate[3]>'1') {
+			throw WrongDateFormatException();
+		}
+		if (newDate[4] < '1' || newDate[4]>'9') {
+			throw WrongDateFormatException();
+		}
+		this->date = newDate;
+	}
+
+	//getters
+	string getDate() {
+		return this->date;
+	}
+	int getNoStarsOfTheShow() {
+		return this->noStarsOfTheShow;
+	}
+	string* getStarsOfTheShow() {
+		string* copy = new string[this->noStarsOfTheShow];
+		for (int i = 0; i < this->noStarsOfTheShow; i++) {
+			copy[i] = starsOfTheShow[i];
+		}
+		return copy;
+	}
+	EventType getEventType() {
+		return this->type;
+	}
+	EventLocation getEventLocation() {
+		return this->location;
+	}
+
+	//setters
+
+	string getEventTypeName(EventType type) {	//so we can see the actual names instead of the associated numbers
+		switch (this->type)
+		{
+		case CONCERT:
+			return "Concert";
+		case STAND_UP:
+			return "Stand up";
+		case FOOTBALL:
+			return "Football";
+		case BASEBALL:
+			return "Baseball";
+		case MOVIE:
+			return "Movie";
+		case THEATER_PLAY:
+			return "Theater play";
+		case CONFERENCE:
+			return "Conference";
+		}
+	}
+
+	void setNoStarsOfTheShow(int number) {
+		this->noStarsOfTheShow = number;
+	}
+	void setStarsOfTheShow(string name) {
+		if (name.size() < MIN_NAME_LENGTH) {
+			throw WrongNameException("Name is too short!");
+		}
+		string* newList = new string[this->noStarsOfTheShow = 1];
+		for (int i = 0; i < this->noStarsOfTheShow;i++) {
+			newList[i] = this->starsOfTheShow[i];
+		}
+		delete[] this->starsOfTheShow;
+		this->starsOfTheShow = newList;
+		this->starsOfTheShow[this->noStarsOfTheShow] = name;
+		this->noStarsOfTheShow += 1;
+	}
+	void setEventType(EventType type) {
+		this->type = type;
+	}
+	void setEventLocation(EventLocation location) {
+		this->location = location;
+	}
+
+	//copy constructor
+	Event(const Event& object) {
+		this->starsOfTheShow = new string[object.noStarsOfTheShow];
+		for (int i = 0; i < object.noStarsOfTheShow; i++) {
+			this->starsOfTheShow[i] = object.starsOfTheShow[i];
+		}
+		this->noStarsOfTheShow = object.noStarsOfTheShow;
+	}
+
+	//destructor
+	~Event() {
+		delete[]this->starsOfTheShow;
+	}
+
+	//operators
+
+	bool operator >=(Event object) {
+		if ()
+	}
+
+	friend void operator<<(ostream& console, Event& event);
+};
+
+void operator<<(ostream& console, Event& event) {
+	console << endl << "Event date: " << event.date;
+	console << endl << "Event type is: " << event.getEventTypeName(event.type);
+	console << endl << "The star(s) of the show is/are: ";
+	for (int i = 0; i < event.noStarsOfTheShow;i++) {
+		console << " " << event.starsOfTheShow[i];
+	}
+}
+
+
+
 int EventLocation::MIN_NAME_LENGTH = 5;
 int EventLocation::MAX_NAME_LENGTH = 30;
