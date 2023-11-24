@@ -321,7 +321,24 @@ public:
 	//operators
 
 	bool operator >=(Event object) {
-		if ()
+		int ok = 0; //while ok = 0, the object's date is not >= than the "this" date
+		if (object.date.year > this->date.year) {
+			ok = 1;
+		} 
+		if(object.date.year == this->date.year){
+			if (object.date.month > this->date.month) {
+				ok = 1;
+			}
+			if (object.date.month == this->date.month) {
+				if (object.date.day > this->date.day) {
+					ok = 1;
+				}
+			}
+		}
+		if (ok == 1) {
+			return true;
+		}
+		else return false;
 	}
 
 	friend void operator<<(ostream& console, Event& event);
