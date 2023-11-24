@@ -345,7 +345,7 @@ public:
 };
 
 void operator<<(ostream& console, Event& event) {
-	console << endl << "Event date: " << event.date;
+	console << endl << "Event date: " << event.date.day <<"/"<<event.date.month<<"/"<<event.date.year;
 	console << endl << "Event type is: " << event.getEventTypeName(event.type);
 	console << endl << "The star(s) of the show is/are: ";
 	for (int i = 0; i < event.noStarsOfTheShow;i++) {
