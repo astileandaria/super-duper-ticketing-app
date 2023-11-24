@@ -7,8 +7,11 @@ using namespace std;
 enum EventType { CONCERT, STAND_UP, FOOTBALL, BASEBALL, MOVIE, THEATER_PLAY, CONFERENCE };
 enum LocationType { MOVIE_THEATER = 200, THEATER = 300, CONFERENCE_HALL = 450, STAGE = 800, STADIUM = 1000, ARENA = 3000 };
 
-class WrongDateFormatException {
+class WrongDateFormatException:public exception {
+public:
+	WrongDateFormatException(string msg) :exception(msg.c_str()) {
 
+	}
 };
 class WrongNameException : public exception {
 public:
@@ -16,6 +19,12 @@ public:
 	{
 
 	}
+};
+
+struct Date {
+	int year;
+	int month;
+	int day;
 };
 
 class EventLocation {
@@ -146,7 +155,7 @@ public:
 };
 
 class Event {
-	string date = "";
+	Date date;
 	EventType type;
 	EventLocation location;
 	string* starsOfTheShow = nullptr;
@@ -154,27 +163,20 @@ class Event {
 public:
 	static int MIN_NAME_LENGTH;
 
-	void setDate(string newDate) {
-		if (newDate[2] != '/' || newDate[5] != '/' || newDate.size() != 10) {
-			throw WrongDateFormatException();
+	void setDate(Date newDate) {
+		if (newDate.day < 0 || newDate.day>31) {
+			throw WrongDateFormatException("Invalid day!");
 		}
-		if (newDate[0] < '0' || newDate[0]>'3') {
-			throw WrongDateFormatException();
+		if (newDate.month < 1 || newDate.month>12) {
+			throw WrongDateFormatException("Invalid month!");
 		}
-		if (newDate[1] < '0' || newDate[1] > '9') {
-			throw WrongDateFormatException();
+		if (newDate.year < 2023) {
+			throw WrongDateFormatException("Invalid year!");
 		}
-		if (newDate[3] < '0' || newDate[3]>'1') {
-			throw WrongDateFormatException();
-		}
-		if (newDate[4] < '1' || newDate[4]>'9') {
-			throw WrongDateFormatException();
-		}
-		this->date = newDate;
 	}
 
 	//getters
-	string getDate() {
+	Date getDate() {
 		return this->date;
 	}
 	int getNoStarsOfTheShow() {
@@ -256,14 +258,31 @@ public:
 	//operators
 
 	bool operator >=(Event object) {
-		if ()
+		int ok = 0; //while ok = 0, the object's date is not >= than the "this" date
+		if (object.date.year > this->date.year) {
+			ok = 1;
+		}
+		if (object.date.year == this->date.year) {
+			if (object.date.month > this->date.month) {
+				ok = 1;
+			}
+			if (object.date.month == this->date.month) {
+				if (object.date.day > this->date.day) {
+					ok = 1;
+				}
+			}
+		}
+		if (ok == 1) {
+			return true;
+		}
+		else return false;
 	}
 
 	friend void operator<<(ostream& console, Event& event);
 };
 
 void operator<<(ostream& console, Event& event) {
-	console << endl << "Event date: " << event.date;
+	console << endl << "Event date: " << event.date.day << "/" << event.date.month << "/" << event.date.year;
 	console << endl << "Event type is: " << event.getEventTypeName(event.type);
 	console << endl << "The star(s) of the show is/are: ";
 	for (int i = 0; i < event.noStarsOfTheShow;i++) {

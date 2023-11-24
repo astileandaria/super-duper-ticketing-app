@@ -198,7 +198,6 @@ void operator<<(ostream& console, EventLocation& eventLocation) {
 
 
 class Event {
-	//string date = "";
 	Date date;
 	EventType type;
 	EventLocation location;
@@ -206,25 +205,6 @@ class Event {
 	int noStarsOfTheShow = 0;
 public:
 	static int MIN_NAME_LENGTH;
-
-	/*void setDate(string newDate) {
-		if (newDate[2] != '/' || newDate[5] != '/' || newDate.size() != 10) {
-			throw WrongDateFormatException();
-		}
-		if (newDate[0] < '0' || newDate[0]>'3') {
-			throw WrongDateFormatException();
-		}
-		if (newDate[1] < '0' || newDate[1] > '9') {
-			throw WrongDateFormatException();
-		}
-		if (newDate[3] < '0' || newDate[3]>'1') {
-			throw WrongDateFormatException();
-		}
-		if (newDate[4] < '1' || newDate[4]>'9') {
-			throw WrongDateFormatException();
-		}
-		this->date = newDate;
-	}*/
 
 	void setDate(Date newDate) {
 		if (newDate.day < 0 || newDate.day>31) {
@@ -345,7 +325,7 @@ public:
 };
 
 void operator<<(ostream& console, Event& event) {
-	console << endl << "Event date: " << event.date.day <<"/"<<event.date.month<<"/"<<event.date.year;
+	console << endl << "Event date: " << event.date.day << "/" << event.date.month << "/" << event.date.year;
 	console << endl << "Event type is: " << event.getEventTypeName(event.type);
 	console << endl << "The star(s) of the show is/are: ";
 	for (int i = 0; i < event.noStarsOfTheShow;i++) {
