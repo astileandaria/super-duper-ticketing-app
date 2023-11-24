@@ -6,8 +6,11 @@ using namespace std;
 enum LocationType { MOVIE_THEATER = 200, THEATER = 300, CONFERENCE_HALL = 450, STAGE = 800, STADIUM = 1000, ARENA = 3000 };
 enum EventType { CONCERT, STAND_UP, FOOTBALL, BASEBALL, MOVIE, THEATER_PLAY, CONFERENCE };
 
-class WrongDateFormatException {
+class WrongDateFormatException: public exception {
+public:
+	WrongDateFormatException(string msg) :exception(msg.c_str()) {
 
+	}
 };
 class WrongNameException : public exception {
 public:
@@ -15,6 +18,12 @@ public:
 	{
 
 	}
+};
+
+struct Date {
+	int year;
+	int month;
+	int day;
 };
 
 class EventLocation {
@@ -189,7 +198,8 @@ void operator<<(ostream& console, EventLocation& eventLocation) {
 
 
 class Event {
-	string date = "";
+	//string date = "";
+	Date date;
 	EventType type;
 	EventLocation location;
 	string* starsOfTheShow = nullptr;
@@ -197,7 +207,7 @@ class Event {
 public:
 	static int MIN_NAME_LENGTH;
 
-	void setDate(string newDate) {
+	/*void setDate(string newDate) {
 		if (newDate[2] != '/' || newDate[5] != '/' || newDate.size() != 10) {
 			throw WrongDateFormatException();
 		}
@@ -214,10 +224,22 @@ public:
 			throw WrongDateFormatException();
 		}
 		this->date = newDate;
+	}*/
+
+	void setDate(Date newDate) {
+		if (newDate.day < 0 || newDate.day>31) {
+			throw WrongDateFormatException("Invalid day!");
+		}
+		if (newDate.month < 1 || newDate.month>12) {
+			throw WrongDateFormatException("Invalid month!");
+		}
+		if (newDate.year < 2023) {
+			throw WrongDateFormatException("Invalid year!");
+		}
 	}
 
 	//getters
-	string getDate() {
+	Date getDate() {
 		return this->date;
 	}
 	int getNoStarsOfTheShow() {
