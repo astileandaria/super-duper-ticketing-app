@@ -518,28 +518,5 @@ void operator<<(ostream& console, Ticket& ticket) {
 	console << endl << "Location is: " << ticket.location;
 }
 
-/*
-bool isValid = true;
-	do { //the user will be in this loop until they insert correct values
-		isValid = true;
-		cout << endl << "Product price: ";
-		cin >> price;
-		if (price < Product::MIN_PRICE) {
-			cout << endl << "Wrong price";
-			isValid = false;
-		}
-		cout << endl << "Product name: ";
-		cin >> name;
-		if (strlen(name) < Product::MIN_NAME_LENGTH) {
-			cout << endl << "Wrong name";
-			isValid = false;
-		}
-		cout << endl << "Product manufacturer: ";
-		cin >> manufacturer;
-	} while (!isValid);
-*/
-
-
-
 int EventLocation::MIN_NAME_LENGTH = 5;
 int EventLocation::MAX_NAME_LENGTH = 30;

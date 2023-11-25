@@ -32,6 +32,25 @@ struct Date {
 	int year;
 	int month;
 	int day;
+
+	Date() :day(1), month(1), year(2023) {
+
+	}
+
+	Date(int d, int m, int y) {
+		if (d < 0 || d > 31) {
+			throw WrongDateFormatException("Invalid day!");
+		}
+		if (m < 1 || m > 12) {
+			throw WrongDateFormatException("Invalid month!");
+		}
+		if (y < 2023) {
+			throw WrongDateFormatException("Invalid year!");
+		}
+		day = d;
+		month = m;
+		year = y;
+	}
 };
 
 class EventLocation {
@@ -212,7 +231,7 @@ void operator<<(ostream& console, EventLocation& eventLocation) {
 
 class Event {
 	Date date;
-	EventType type;
+	EventType type = EventType::CONCERT;
 	EventLocation location;
 	string* starsOfTheShow = nullptr;
 	int noStarsOfTheShow = 0;
@@ -220,11 +239,11 @@ public:
 	static int MIN_NAME_LENGTH;
 
 	//constructors
-	Event() {
+	Event():date(), location() {
 
 	}
-	Event(Date date, EventType type, const char* venueName, LocationType locationType)
-		:date(date), location(venueName, locationType) {
+	Event(int day, int month, int year, EventType type, const char* venueName, LocationType locationType)
+		:date(day, month, year), location(venueName, locationType) {
 
 	}
 
@@ -271,17 +290,7 @@ public:
 
 	//setters
 
-	void setDate(Date newDate) {
-		if (newDate.day < 0 || newDate.day > 31) {
-			throw WrongDateFormatException("Invalid day!");
-		}
-		if (newDate.month < 1 || newDate.month>12) {
-			throw WrongDateFormatException("Invalid month!");
-		}
-		if (newDate.year < 2023) {
-			throw WrongDateFormatException("Invalid year!");
-		}
-	}
+	
 
 	void setNoStarsOfTheShow(int number) {
 		this->noStarsOfTheShow = number;
@@ -384,9 +393,6 @@ public:
 	}
 	Ticket(int id, int seatNumber, int rowNumber, const char* venueName, LocationType type, Zones zone)
 		:id(id), seatNumber(seatNumber), rowNumber(rowNumber), location(venueName, type), zone(zone) {
-
-	}
-	Ticket(const Ticket& ticket) : id(ticket.id), seatNumber(ticket.seatNumber), rowNumber(ticket.rowNumber), location(ticket.location), zone(ticket.zone) {
 
 	}
 
@@ -517,29 +523,6 @@ void operator<<(ostream& console, Ticket& ticket) {
 	console << endl << "Zone is: " << ticket.getZoneName(ticket.zone);
 	console << endl << "Location is: " << ticket.location;
 }
-
-/*
-bool isValid = true;
-	do { //the user will be in this loop until they insert correct values
-		isValid = true;
-		cout << endl << "Product price: ";
-		cin >> price;
-		if (price < Product::MIN_PRICE) {
-			cout << endl << "Wrong price";
-			isValid = false;
-		}
-		cout << endl << "Product name: ";
-		cin >> name;
-		if (strlen(name) < Product::MIN_NAME_LENGTH) {
-			cout << endl << "Wrong name";
-			isValid = false;
-		}
-		cout << endl << "Product manufacturer: ";
-		cin >> manufacturer;
-	} while (!isValid);
-*/
-
-
 
 int EventLocation::MIN_NAME_LENGTH = 5;
 int EventLocation::MAX_NAME_LENGTH = 30;
