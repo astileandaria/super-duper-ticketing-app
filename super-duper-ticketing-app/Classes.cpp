@@ -20,6 +20,13 @@ public:
 
 	}
 };
+class WrongNumberException : public exception {
+public:
+	WrongNumberException(string msg) :exception(msg.c_str())
+	{
+
+	}
+};
 
 struct Date {
 	int year;
@@ -61,10 +68,7 @@ public:
 		: maxNoSeats(maxNoSeats), noRows(noRows), noSeatsPerRow(noSeatsPerRow), type(type) {
 		setVenueName(venueName);
 	}
-	/*EventLocation(const EventLocation& location)
-		:venueName(location.venueName), maxNoSeats(location.maxNoSeats), noRows(location.noRows), noSeatsPerRow(location.noSeatsPerRow), type(location.type) {
 
-	}*/
 
 	//getters
 	int getMaxNoSeats() {
@@ -130,7 +134,7 @@ public:
 	}
 	void setVenueName(const char* name) {
 		if (strlen(name) < EventLocation::MIN_NAME_LENGTH || strlen(name) > EventLocation::MAX_NAME_LENGTH) {
-			throw exception("The location name must be between 5 and 30 characters!");
+			throw WrongNumberException("The location name must be between 5 and 30 characters!");
 		}
 		else {
 			if (this->venueName != nullptr) {
@@ -219,22 +223,9 @@ public:
 	Event() {
 
 	}
-
 	Event(Date date, EventType type, const char* venueName, LocationType locationType)
 		:date(date), location(venueName, locationType) {
 
-	}
-
-	void setDate(Date newDate) {
-		if (newDate.day < 0 || newDate.day > 31) {
-			throw WrongDateFormatException("Invalid day!");
-		}
-		if (newDate.month < 1 || newDate.month>12) {
-			throw WrongDateFormatException("Invalid month!");
-		}
-		if (newDate.year < 2023) {
-			throw WrongDateFormatException("Invalid year!");
-		}
 	}
 
 	//getters
@@ -279,6 +270,18 @@ public:
 	}
 
 	//setters
+
+	void setDate(Date newDate) {
+		if (newDate.day < 0 || newDate.day > 31) {
+			throw WrongDateFormatException("Invalid day!");
+		}
+		if (newDate.month < 1 || newDate.month>12) {
+			throw WrongDateFormatException("Invalid month!");
+		}
+		if (newDate.year < 2023) {
+			throw WrongDateFormatException("Invalid year!");
+		}
+	}
 
 	void setNoStarsOfTheShow(int number) {
 		this->noStarsOfTheShow = number;
@@ -434,7 +437,7 @@ public:
 	}
 	void setSeatNumber(int seatNumber) {
 		if (seatNumber <= 0 || seatNumber > 50) {
-			throw exception("The seat number is not valid!");
+			throw WrongNumberException("The seat number is not valid!");
 		}
 		else {
 			this->seatNumber = seatNumber;
@@ -442,7 +445,7 @@ public:
 	}
 	void setRowNumber(int rowNumber) {
 		if (rowNumber < 0 || rowNumber > 100) {
-			throw exception("The row number is not valid!");
+			throw WrongNumberException("The row number is not valid!");
 		}
 		else {
 			this->rowNumber = rowNumber;
