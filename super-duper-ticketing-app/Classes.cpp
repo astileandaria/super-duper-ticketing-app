@@ -54,17 +54,17 @@ public:
 	EventLocation() {
 
 	}
-	EventLocation(const char* venueName, LocationType type) : type(type) {
+	EventLocation(const char* venueName, LocationType type) {
 		setVenueName(venueName);
 	}
 	EventLocation(const char* venueName, int maxNoSeats, int noRows, int noSeatsPerRow, LocationType type)
 		: maxNoSeats(maxNoSeats), noRows(noRows), noSeatsPerRow(noSeatsPerRow), type(type) {
 		setVenueName(venueName);
 	}
-	EventLocation(const EventLocation& location)
+	/*EventLocation(const EventLocation& location)
 		:venueName(location.venueName), maxNoSeats(location.maxNoSeats), noRows(location.noRows), noSeatsPerRow(location.noSeatsPerRow), type(location.type) {
 
-	}
+	}*/
 
 	//getters
 	int getMaxNoSeats() {
@@ -176,6 +176,16 @@ public:
 
 	//operators
 
+	void operator=(const EventLocation source) {
+		if (&source == this) {
+			return;
+		}
+		this->setVenueName(source.venueName);
+		this->setNoRows(source.noRows);
+		this->setNoSeatsPerRows(source.noSeatsPerRow);
+		this->setMaxNoSeats(source.type);
+	}
+
 	bool operator==(EventLocation object) {
 		if (object.calculateTotalNoSeats() == this->calculateTotalNoSeats()) {
 			return true;
@@ -205,8 +215,18 @@ class Event {
 public:
 	static int MIN_NAME_LENGTH;
 
+	//constructors
+	Event() {
+
+	}
+
+	Event(Date date, EventType type, const char* venueName, LocationType locationType)
+		:date(date), location(venueName, locationType) {
+
+	}
+
 	void setDate(Date newDate) {
-		if (newDate.day < 0 || newDate.day>31) {
+		if (newDate.day < 0 || newDate.day > 31) {
 			throw WrongDateFormatException("Invalid day!");
 		}
 		if (newDate.month < 1 || newDate.month>12) {
@@ -260,8 +280,6 @@ public:
 
 	//setters
 
-
-
 	void setNoStarsOfTheShow(int number) {
 		this->noStarsOfTheShow = number;
 	}
@@ -300,6 +318,17 @@ public:
 	}
 
 	//operators
+
+	void operator=(const Event source) {
+		if (&source == this) {
+			return;
+		}
+		this->setDate(source.date);
+		this->setEventLocation(source.location);
+		this->setEventType(source.type);
+		this->setNoStarsOfTheShow(source.noStarsOfTheShow);
+		this->setStarsOfTheShow(source.starsOfTheShow->c_str());
+	}
 
 	bool operator >=(Event object) {
 		int ok = 0; //while ok = 0, the object's date is not >= than the "this" date
@@ -454,6 +483,26 @@ public:
 	}
 
 	//operators
+
+	void operator=(const Ticket source) {
+		if (&source == this) {
+			return;
+		}
+		this->setId();
+		this->setRowNumber(source.rowNumber);
+		this->setSeatNumber(source.seatNumber);
+		this->setZone(source.zone);
+	}
+
+	Ticket operator++(int) {
+		Ticket copy = *this;
+		this->seatNumber += 1;
+		return copy;
+	}
+	Ticket operator++() {
+		this->seatNumber += 1;
+		return *this;
+	}
 
 	friend void operator<<(ostream& console, Ticket& ticket);
 };
