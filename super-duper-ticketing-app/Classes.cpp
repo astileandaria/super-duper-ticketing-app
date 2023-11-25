@@ -37,19 +37,8 @@ struct Date {
 
 	}
 
-	Date(int d, int m, int y) {
-		if (d < 0 || d > 31) {
-			throw WrongDateFormatException("Invalid day!");
-		}
-		if (m < 1 || m > 12) {
-			throw WrongDateFormatException("Invalid month!");
-		}
-		if (y < 2023) {
-			throw WrongDateFormatException("Invalid year!");
-		}
-		day = d;
-		month = m;
-		year = y;
+	Date(int d, int m, int y): day(d), month(m), year(y) {
+		
 	}
 };
 
@@ -290,7 +279,20 @@ public:
 
 	//setters
 
-	
+	void setDate(int d, int m, int y) {
+		if (d < 0 || d > 31) {
+			throw WrongDateFormatException("Invalid day!");
+		}
+		if (m < 1 || m > 12) {
+			throw WrongDateFormatException("Invalid month!");
+		}
+		if (y < 2023) {
+			throw WrongDateFormatException("Invalid year!");
+		}
+		this->date.day = d;
+		this->date.month = m;
+		this->date.year = y;
+	}
 
 	void setNoStarsOfTheShow(int number) {
 		this->noStarsOfTheShow = number;
@@ -335,7 +337,7 @@ public:
 		if (&source == this) {
 			return;
 		}
-		this->setDate(source.date);
+		this->setDate(source.date.day, source.date.month, source.date.year);
 		this->setEventLocation(source.location);
 		this->setEventType(source.type);
 		this->setNoStarsOfTheShow(source.noStarsOfTheShow);

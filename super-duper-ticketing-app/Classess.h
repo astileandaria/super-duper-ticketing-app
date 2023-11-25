@@ -32,6 +32,14 @@ struct Date {
 	int year;
 	int month;
 	int day;
+
+	Date() :day(1), month(1), year(2023) {
+
+	}
+
+	Date(int d, int m, int y) : day(d), month(m), year(y) {
+
+	}
 };
 
 class EventLocation {
@@ -212,7 +220,7 @@ void operator<<(ostream& console, EventLocation& eventLocation) {
 
 class Event {
 	Date date;
-	EventType type;
+	EventType type = EventType::CONCERT;
 	EventLocation location;
 	string* starsOfTheShow = nullptr;
 	int noStarsOfTheShow = 0;
@@ -220,11 +228,11 @@ public:
 	static int MIN_NAME_LENGTH;
 
 	//constructors
-	Event() {
+	Event() :date(), location() {
 
 	}
-	Event(Date date, EventType type, const char* venueName, LocationType locationType)
-		:date(date), location(venueName, locationType) {
+	Event(int day, int month, int year, EventType type, const char* venueName, LocationType locationType)
+		:date(day, month, year), location(venueName, locationType) {
 
 	}
 
@@ -271,16 +279,19 @@ public:
 
 	//setters
 
-	void setDate(Date newDate) {
-		if (newDate.day < 0 || newDate.day > 31) {
+	void setDate(int d, int m, int y) {
+		if (d < 0 || d > 31) {
 			throw WrongDateFormatException("Invalid day!");
 		}
-		if (newDate.month < 1 || newDate.month>12) {
+		if (m < 1 || m > 12) {
 			throw WrongDateFormatException("Invalid month!");
 		}
-		if (newDate.year < 2023) {
+		if (y < 2023) {
 			throw WrongDateFormatException("Invalid year!");
 		}
+		this->date.day = d;
+		this->date.month = m;
+		this->date.year = y;
 	}
 
 	void setNoStarsOfTheShow(int number) {
@@ -326,7 +337,7 @@ public:
 		if (&source == this) {
 			return;
 		}
-		this->setDate(source.date);
+		this->setDate(source.date.day, source.date.month, source.date.year);
 		this->setEventLocation(source.location);
 		this->setEventType(source.type);
 		this->setNoStarsOfTheShow(source.noStarsOfTheShow);
@@ -384,9 +395,6 @@ public:
 	}
 	Ticket(int id, int seatNumber, int rowNumber, const char* venueName, LocationType type, Zones zone)
 		:id(id), seatNumber(seatNumber), rowNumber(rowNumber), location(venueName, type), zone(zone) {
-
-	}
-	Ticket(const Ticket& ticket) : id(ticket.id), seatNumber(ticket.seatNumber), rowNumber(ticket.rowNumber), location(ticket.location), zone(ticket.zone) {
 
 	}
 
