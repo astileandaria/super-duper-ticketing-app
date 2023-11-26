@@ -3,32 +3,65 @@
 #include "Classess.h"
 using namespace std;
 
-
-
-
-
-
-
-
-
-
-/*
-bool isValid = true;
-	do { //the user will be in this loop until they insert correct values
-		isValid = true;
-		cout << endl << "Product price: ";
-		cin >> price;
-		if (price < Product::MIN_PRICE) {
-			cout << endl << "Wrong price";
-			isValid = false;
+int main() {
+	EventLocation eventLocation;
+	while (true) {
+		try {
+			cin >> eventLocation;
 		}
-		cout << endl << "Product name: ";
-		cin >> name;
-		if (strlen(name) < Product::MIN_NAME_LENGTH) {
+		catch (WrongDateFormatException e) {
+			cout << endl << "Wrong date";
+		}
+		catch (WrongNameException e) {
 			cout << endl << "Wrong name";
-			isValid = false;
 		}
-		cout << endl << "Product manufacturer: ";
-		cin >> manufacturer;
-	} while (!isValid);
-*/
+		catch (WrongNumberException e) {
+			cout << endl << "Wrong number";
+		}
+		catch (...) {
+			cout << endl << "There's an issue";
+		}
+	}
+
+
+	Event event;
+	while (true) {
+		try {
+			cin >> event;
+		}
+		catch (WrongDateFormatException e) {
+			cout << endl << "Wrong date";
+		}
+		catch (WrongNameException e) {
+			cout << endl << "Wrong name";
+		}
+		catch (WrongNumberException e) {
+			cout << endl << "Wrong number";
+		}
+		catch (...) {
+			cout << endl << "There's an issue";
+		}
+	}
+
+	Ticket ticket;
+	while (true) {
+		try {
+			cin >> ticket;
+		}
+		catch (WrongDateFormatException e) {
+			cout << endl << "Wrong date";
+		}
+		catch (WrongNameException e) {
+			cout << endl << "Wrong name";
+		}
+		catch (WrongNumberException e) {
+			cout << endl << "Wrong number";
+		}
+		catch (...) {
+			cout << endl << "There's an issue";
+		}
+	}
+	
+}
+
+
