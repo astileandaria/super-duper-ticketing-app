@@ -150,10 +150,16 @@ public:
 			throw WrongNumberException("That location type is invalid!");
 		}
 	}
-	void setNoSeatsPerRows(int noSeatsPerRow) {
+	void setNoSeatsPerRows(int noSeatsPerRow){
+		if (noSeatsPerRow < 0) {
+			throw WrongNumberException("Wrong number!");
+		}
 		this->noSeatsPerRow = noSeatsPerRow;
 	}
 	void setNoRows(int noRows) {
+		if (noRows < 0) {
+			throw WrongNumberException("Wrong number!");
+		}
 		this->noRows = noRows;
 	}
 	void setVenueName(const char* name) {
@@ -443,7 +449,10 @@ public:
 		}
 		strcpy_s(this->eventName, strlen(name) + 1, name);
 	}
-	void setNoStarsOfTheShow(int number) {
+	void setNoStarsOfTheShow(int number){
+		if (number < 0) {
+			throw WrongNumberException("Wrong number!");
+		}
 		this->noStarsOfTheShow = number;
 	}
 	void setStarsOfTheShow(string name) {
@@ -460,6 +469,9 @@ public:
 		this->noStarsOfTheShow += 1;
 	}
 	void setEventType(EventType type) {
+		if (type < 0 || type > 6) {
+			throw WrongNumberException("Wrong number!");
+		}
 		this->type = type;
 	}
 	void setEventLocation(EventLocation location) {
@@ -708,6 +720,9 @@ public:
 
 	//setters
 	void setZone(Zones zone) {
+		if (zone < 0 || zone >8) {
+			throw WrongNumberException("Wrong number!");
+		}
 		this->zone = zone;
 	}
 	void setOwnerName(const char* name) {
