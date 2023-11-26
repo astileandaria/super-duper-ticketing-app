@@ -48,7 +48,7 @@ class EventLocation {
 	float rentingPrice = 0;
 	LocationType type = LocationType::THEATER;
 	int* availableSeatsOnRow = nullptr;	//shows explicitly the free seats' number
-	int noAvailableSeatsOnRow = 0;	
+	int noAvailableSeatsOnRow = 0;
 	int** availableSeats = nullptr; //array of pointers to each int* availableSeatsOnRow; noElements = noRows
 
 public:
@@ -201,11 +201,22 @@ public:
 		this->venueName = new char[strlen(object.venueName) + 1];
 		strcpy_s(this->venueName, strlen(object.venueName) + 1, object.venueName);
 		strcpy_s(this->venueManager, strlen(object.venueManager) + 1, object.venueManager);
+		this->availableSeatsOnRow = new int[object.noAvailableSeatsOnRow];
+		for (int i = 0; i < object.noAvailableSeatsOnRow; i++) {
+			this->availableSeatsOnRow[i] = object.availableSeatsOnRow[i];
+		}
+		this->noAvailableSeatsOnRow = object.noAvailableSeatsOnRow;
+		this->availableSeats = new int* [object.noRows];
+		for (int i = 0; i < this->noRows; i++) {
+			this->availableSeats[i] = object.availableSeats[i];
+		}
 	}
 
 	//destructor
 	~EventLocation() {
 		delete[]this->venueName;
+		delete[]this->availableSeats;
+		delete[]this->availableSeatsOnRow;
 	}
 
 	//operators
@@ -283,7 +294,7 @@ void operator<<(ostream& console, EventLocation& eventLocation) {
 	console << endl << "Manager name is: " << eventLocation.venueManager;
 	console << endl << "renting price is: " << eventLocation.rentingPrice;
 	console << endl << "Event type is: " << eventLocation.getLocationTypeName(eventLocation.type);
-	console << endl << "Number of rows: "<< eventLocation.noRows;
+	console << endl << "Number of rows: " << eventLocation.noRows;
 	console << endl << "Number of seatsPerRow: " << eventLocation.noSeatsPerRow;
 }
 void operator>>(istream& console, EventLocation& eventLocation) {
@@ -365,10 +376,10 @@ public:
 	}
 
 	//constructors
-	Event():date(), location() {
+	Event() :date(), location() {
 
 	}
-	Event(const char* eventName, float enthryPrice): entryPrice(entryPrice) {
+	Event(const char* eventName, float enthryPrice) : entryPrice(entryPrice) {
 		this->setEventName(eventName);
 	}
 	Event(int day, int month, int year, EventType type, const char* venueName, LocationType locationType, const char* eventName, float entryPrice)
@@ -456,7 +467,7 @@ public:
 	}
 
 	//copy constructor
-	Event(const Event& object): date(object.date), type(object.type), location(object.location), entryPrice(object.entryPrice) {
+	Event(const Event& object) : date(object.date), type(object.type), location(object.location), entryPrice(object.entryPrice) {
 		this->starsOfTheShow = new string[object.noStarsOfTheShow];
 		for (int i = 0; i < object.noStarsOfTheShow; i++) {
 			this->starsOfTheShow[i] = object.starsOfTheShow[i];
@@ -486,8 +497,8 @@ public:
 		int ok = 0; //while ok = 0, the object's date is not >= than the "this" date
 		if (object.date.year > this->date.year) {
 			ok = 1;
-		} 
-		if(object.date.year == this->date.year){
+		}
+		if (object.date.year == this->date.year) {
 			if (object.date.month > this->date.month) {
 				ok = 1;
 			}
@@ -665,7 +676,7 @@ public:
 	//constructors
 	Ticket() {
 	}
-	Ticket(int id, const char* ownerName, int seatNumber, int rowNumber): id(id), seatNumber(seatNumber), rowNumber(rowNumber) {
+	Ticket(int id, const char* ownerName, int seatNumber, int rowNumber) : id(id), seatNumber(seatNumber), rowNumber(rowNumber) {
 		this->setOwnerName(ownerName);
 	}
 	Ticket(int id, int seatNumber, int rowNumber, const char* venueName, LocationType type, Zones zone, const char* ownerName)
