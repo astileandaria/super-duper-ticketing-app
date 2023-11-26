@@ -32,11 +32,9 @@ struct Date {
 	int year;
 	int month;
 	int day;
-
 	Date() :day(1), month(1), year(2023) {
 
 	}
-
 	Date(int d, int m, int y): day(d), month(m), year(y) {
 		
 	}
@@ -44,13 +42,14 @@ struct Date {
 
 class EventLocation {
 	char* venueName = nullptr;
+	char venueManager[30] = "";
 	int noRows = 0;
 	int noSeatsPerRow = 0;
+	float rentingPrice = 0;
 	LocationType type = LocationType::THEATER;
-
-	//int* availableSeatsOnRow = nullptr;	//shows explicitly the free seats' number
-	//int noAvailableSeatsOnRow = 0;	
-	//int** availableSeats = nullptr; //array of pointers to each int* availableSeatsOnRow; noElements = noRows
+	int* availableSeatsOnRow = nullptr;	//shows explicitly the free seats' number
+	int noAvailableSeatsOnRow = 0;	
+	int** availableSeats = nullptr; //array of pointers to each int* availableSeatsOnRow; noElements = noRows
 
 public:
 	//statics
@@ -64,46 +63,6 @@ public:
 		return total;
 	}
 
-	//constructors
-	EventLocation() {
-
-	}
-	EventLocation(const char* venueName, LocationType type) {
-		setVenueName(venueName);
-	}
-	EventLocation(const char* venueName, int maxNoSeats, int noRows, int noSeatsPerRow, LocationType type)
-		: noRows(noRows), noSeatsPerRow(noSeatsPerRow), type(type) {
-		setVenueName(venueName);
-	}
-
-
-	//getters
-	int getNoRows() {
-		return this->noRows;
-	}
-	int getNoSeatsPerRow() {
-		return this->noSeatsPerRow;
-	}
-	/*int getNoAvailableSeatsOnRow() {
-		return this->noAvailableSeatsOnRow;
-	}
-	int** getAvailableSeats() {
-		int** copy = new int* [this->noRows];
-		for (int i = 0; i < this->noRows; i++) {
-			copy[i] = availableSeats[i];
-		}
-		return copy;
-	}
-	char* getVenueName() {
-		return this->venueName;
-	}
-	int* getAvailableSeatsOnRow() {
-		int* copy = new int[this->noAvailableSeatsOnRow];
-		for (int i = 0; i < this->noAvailableSeatsOnRow; i++) {
-			copy[i] = availableSeatsOnRow[i];
-		}
-		return copy;
-	}*/
 	string getLocationTypeName(LocationType type) {	//so we can see the actual names instead of the associated numbers
 		switch (this->type)
 		{
@@ -121,11 +80,73 @@ public:
 			return "Arena";
 		}
 	}
+
+	void printInfo() {
+
+	}
+
+	//constructors
+	EventLocation() {
+
+	}
+	EventLocation(const char* venueName, LocationType type) {
+		this->setVenueName(venueName);
+	}
+	EventLocation(const char* venueName, const char* venueManager, int maxNoSeats, int noRows, int noSeatsPerRow, LocationType type, float rentingPrice)
+		: noRows(noRows), noSeatsPerRow(noSeatsPerRow), type(type), rentingPrice(rentingPrice) {
+		this->setVenueName(venueName);
+		this->setVenueManager(venueManager);
+	}
+
+
+	//getters
+	float getRentingPrice() {
+		return this->rentingPrice;
+	}
+	int getNoRows() {
+		return this->noRows;
+	}
+	int getNoSeatsPerRow() {
+		return this->noSeatsPerRow;
+	}
+	char* getVenueManager() {
+		char* copy = new char[strlen(this->venueManager) + 1];
+		strcpy_s(copy, strlen(this->venueManager) + 1, this->venueManager);
+		return copy;
+	}
+	char* getVenueName() {
+		char* copy = new char[strlen(this->venueName) + 1];
+		strcpy_s(copy, strlen(this->venueName) + 1, this->venueName);
+		return copy;
+	}
 	LocationType getLocationType() {
 		return this->type;
 	}
+	int getNoAvailableSeatsOnRow() {
+		return this->noAvailableSeatsOnRow;
+	}
+	int** getAvailableSeats() {
+		int** copy = new int* [this->noRows];
+		for (int i = 0; i < this->noRows; i++) {
+			copy[i] = availableSeats[i];
+		}
+		return copy;
+	}
+	int* getAvailableSeatsOnRow() {
+		int* copy = new int[this->noAvailableSeatsOnRow];
+		for (int i = 0; i < this->noAvailableSeatsOnRow; i++) {
+			copy[i] = availableSeatsOnRow[i];
+		}
+		return copy;
+	}
 
 	//setters
+	void setRentingPrice(float newPrice) {
+		if (newPrice <= 0) {
+			throw WrongNumberException("Price cannot be lower than 0!");
+		}
+		this->rentingPrice = newPrice;
+	}
 	void setLocationType(LocationType type) {
 		if (type >= 0 && type <= 5) {
 			this->type = type;
@@ -134,7 +155,6 @@ public:
 			throw WrongNumberException("That location type is invalid!");
 		}
 	}
-
 	void setNoSeatsPerRows(int noSeatsPerRow) {
 		this->noSeatsPerRow = noSeatsPerRow;
 	}
@@ -153,31 +173,39 @@ public:
 			strcpy_s(this->venueName, strlen(name) + 1, name);
 		}
 	}
-	//void setInitialAvailableSeats(int* const availableSeatsOnRow, int** availableSeats) {
-	//	//if (someAvailableSeats == nullptr) {
-	//	//	throw exception("No more available seats!");
-	//	//}
-	//	if (this->availableSeatsOnRow != nullptr) {
-	//		delete[]availableSeatsOnRow;
-	//	}
-	//	if (this->availableSeats != nullptr) {
-	//		delete[]availableSeats;
-	//	}
-	//	this->availableSeatsOnRow = new int[this->noSeatsPerRow];
-	//	this->availableSeats = new int* [this->noRows];
+	void setVenueManager(const char* manager) {
+		if (strlen(manager) < EventLocation::MIN_NAME_LENGTH || strlen(manager) > EventLocation::MAX_NAME_LENGTH) {
+			throw WrongNumberException("The name must have between 5 and 30 characters!");
+		}
+		strcpy_s(this->venueManager, strlen(manager) + 1, manager);
+	}
+	void setInitialAvailableSeats(int* const availableSeatsOnRow, int** availableSeats) {
+		//if (someAvailableSeats == nullptr) {
+		//	throw exception("No more available seats!");
+		//}
+		if (this->availableSeatsOnRow != nullptr) {
+			delete[]availableSeatsOnRow;
+		}
+		if (this->availableSeats != nullptr) {
+			delete[]availableSeats;
+		}
+		this->availableSeatsOnRow = new int[this->noSeatsPerRow];
+		this->availableSeats = new int* [this->noRows];
 
-	//	for (int j = 0; j < this->noRows; j++) { //populating the array of pointers toeach row
-	//		for (int i = 0; i < this->noSeatsPerRow; i++) {	//populating each row with its corresponding seat numbers
-	//			this->availableSeatsOnRow[i] = i + 1; //the seat numbers start from 1 
-	//		}
-	//		this->availableSeats[j] = &this->availableSeatsOnRow[j];
-	//	}
-	//}
+		for (int j = 0; j < this->noRows; j++) { //populating the array of pointers toeach row
+			for (int i = 0; i < this->noSeatsPerRow; i++) {	//populating each row with its corresponding seat numbers
+				this->availableSeatsOnRow[i] = i + 1; //the seat numbers start from 1 
+			}
+			this->availableSeats[j] = &this->availableSeatsOnRow[j];
+		}
+	}
 
 	//copy constructor
-	EventLocation(const EventLocation& object):noRows(object.noRows), noSeatsPerRow(object.noSeatsPerRow), type(object.type) {
+	EventLocation(const EventLocation& object)
+		: noRows(object.noRows), noSeatsPerRow(object.noSeatsPerRow), type(object.type), rentingPrice(object.rentingPrice) {
 		this->venueName = new char[strlen(object.venueName) + 1];
 		strcpy_s(this->venueName, strlen(object.venueName) + 1, object.venueName);
+		strcpy_s(this->venueManager, strlen(object.venueManager) + 1, object.venueManager);
 	}
 
 	//destructor
@@ -186,7 +214,6 @@ public:
 	}
 
 	//operators
-
 	void operator=(const EventLocation source) {
 		if (&source == this) {
 			return;
@@ -195,13 +222,60 @@ public:
 		this->setNoRows(source.noRows);
 		this->setNoSeatsPerRows(source.noSeatsPerRow);
 	}
-
 	bool operator==(EventLocation object) {
 		if (object.calculateTotalNoSeats() == this->calculateTotalNoSeats()) {
 			return true;
 		}
 		else {
 			return false;
+		}
+	}
+	bool operator>=(EventLocation object) {
+		if (object.calculateTotalNoSeats() >= this->calculateTotalNoSeats()) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	bool operator!() {
+		if (this->noRows == 0) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	EventLocation operator--() {
+		this->rentingPrice -= 1;
+		return *this;
+	}
+	EventLocation operator--(int) {
+		EventLocation copy = *this;
+		this->rentingPrice -= 1;
+		return copy;
+	}
+	EventLocation operator*(int n) {
+		EventLocation copy = *this;
+		copy.rentingPrice *= n;
+		return copy;
+	}
+	int& operator[](int index) {
+		if (index<0 || index>this->noSeatsPerRow) {
+			throw WrongNumberException("Wrong index number");
+		}
+		return this->availableSeatsOnRow[index];
+	}
+	explicit operator float() {
+		int sum = 0;
+		for (int i = 0; i < this->noAvailableSeatsOnRow; i++) {
+			sum += this->availableSeatsOnRow[i];
+		}
+		if (this->noAvailableSeatsOnRow == 0) {
+			return 0;
+		}
+		else {
+			return (float)sum / this->noAvailableSeatsOnRow;
 		}
 	}
 
@@ -211,6 +285,8 @@ public:
 
 void operator<<(ostream& console, EventLocation& eventLocation) {
 	console << endl << "Location name: " << eventLocation.venueName;
+	console << endl << "Manager name is: " << eventLocation.venueManager;
+	console << endl << "renting price is: " << eventLocation.rentingPrice;
 	console << endl << "Event type is: " << eventLocation.getLocationTypeName(eventLocation.type);
 	console << endl << "Number of rows: "<< eventLocation.noRows;
 	console << endl << "Number of seatsPerRow: " << eventLocation.noSeatsPerRow;
@@ -220,6 +296,14 @@ void operator>>(istream& console, EventLocation& eventLocation) {
 	char* venueName;
 	console >> venueName;
 	eventLocation.venueName = venueName;
+	cout << endl << "Venue manager: ";
+	char venueManager[30];
+	console >> venueManager;
+	eventLocation.setVenueManager(venueManager);
+	cout << endl << "Renting price is: ";
+	float price;
+	console >> price;
+	eventLocation.rentingPrice = price;
 	cout << endl << "Number of rows: ";
 	int noRows;
 	console >> noRows;
@@ -239,37 +323,18 @@ void operator>>(istream& console, EventLocation& eventLocation) {
 
 class Event {
 	Date date;
+	char eventName[30] = "";
 	EventType type = EventType::CONCERT;
 	EventLocation location;
 	string* starsOfTheShow = nullptr;
 	int noStarsOfTheShow = 0;
+	float entryPrice = 0;
 public:
+	//statics
 	static int MIN_NAME_LENGTH;
+	static int MAX_NAME_LENGTH;
 
-	//constructors
-	Event():date(), location() {
-
-	}
-	Event(int day, int month, int year, EventType type, const char* venueName, LocationType locationType)
-		:date(day, month, year), location(venueName, locationType) {
-
-	}
-
-	//getters
-	Date getDate() {
-		return this->date;
-	}
-	int getNoStarsOfTheShow() {
-		return this->noStarsOfTheShow;
-	}
-	string* getStarsOfTheShow() {
-		string* copy = new string[this->noStarsOfTheShow];
-		for (int i = 0; i < this->noStarsOfTheShow; i++) {
-			copy[i] = starsOfTheShow[i];
-		}
-		return copy;
-	}
-
+	//other methods
 	string getEventTypeName(EventType type) {	//so we can see the actual names instead of the associated numbers
 		switch (this->type)
 		{
@@ -289,6 +354,44 @@ public:
 			return "Conference";
 		}
 	}
+	void printInfo() {
+
+	}
+
+	//constructors
+	Event():date(), location() {
+
+	}
+	Event(const char* eventName, float enthryPrice): entryPrice(entryPrice) {
+		this->setEventName(eventName);
+	}
+	Event(int day, int month, int year, EventType type, const char* venueName, LocationType locationType, const char* eventName, float entryPrice)
+		: date(day, month, year), location(venueName, locationType), type(type), entryPrice(entryPrice) {
+		this->setEventName(eventName);
+	}
+
+	//getters
+	float getEntryPrice() {
+		return this->entryPrice;
+	}
+	Date getDate() {
+		return this->date;
+	}
+	char* getEventName() {
+		char* copy = new char[strlen(this->eventName) + 1];
+		strcpy_s(copy, strlen(this->eventName) + 1, this->eventName);
+		return copy;
+	}
+	int getNoStarsOfTheShow() {
+		return this->noStarsOfTheShow;
+	}
+	string* getStarsOfTheShow() {
+		string* copy = new string[this->noStarsOfTheShow];
+		for (int i = 0; i < this->noStarsOfTheShow; i++) {
+			copy[i] = starsOfTheShow[i];
+		}
+		return copy;
+	}
 	EventType getEventType() {
 		return this->type;
 	}
@@ -297,7 +400,12 @@ public:
 	}
 
 	//setters
-
+	void setEntryPrice(float newEntryPrice) {
+		if (newEntryPrice <= 0) {
+			throw WrongNumberException("Price cannot be lower than 0!");
+		}
+		this->entryPrice = newEntryPrice;
+	}
 	void setDate(int d, int m, int y) {
 		if (d < 0 || d > 31) {
 			throw WrongDateFormatException("Invalid day!");
@@ -312,7 +420,12 @@ public:
 		this->date.month = m;
 		this->date.year = y;
 	}
-
+	void setEventName(const char* name) {
+		if (strlen(name) < Event::MIN_NAME_LENGTH || strlen(name) > Event::MAX_NAME_LENGTH) {
+			throw WrongNumberException("The name must have between 5 and 30 characters!");
+		}
+		strcpy_s(this->eventName, strlen(name) + 1, name);
+	}
 	void setNoStarsOfTheShow(int number) {
 		this->noStarsOfTheShow = number;
 	}
@@ -337,12 +450,14 @@ public:
 	}
 
 	//copy constructor
-	Event(const Event& object) {
+	Event(const Event& object): date(object.date), type(object.type), location(object.location), entryPrice(object.entryPrice) {
 		this->starsOfTheShow = new string[object.noStarsOfTheShow];
 		for (int i = 0; i < object.noStarsOfTheShow; i++) {
 			this->starsOfTheShow[i] = object.starsOfTheShow[i];
 		}
 		this->noStarsOfTheShow = object.noStarsOfTheShow;
+
+		strcpy_s(this->eventName, strlen(object.eventName), object.eventName);
 	}
 
 	//destructor
@@ -351,7 +466,6 @@ public:
 	}
 
 	//operators
-
 	void operator=(const Event source) {
 		if (&source == this) {
 			return;
@@ -362,8 +476,7 @@ public:
 		this->setNoStarsOfTheShow(source.noStarsOfTheShow);
 		this->setStarsOfTheShow(source.starsOfTheShow->c_str());
 	}
-
-	bool operator >=(Event object) {
+	bool operator>=(Event object) {
 		int ok = 0; //while ok = 0, the object's date is not >= than the "this" date
 		if (object.date.year > this->date.year) {
 			ok = 1;
@@ -383,6 +496,45 @@ public:
 		}
 		else return false;
 	}
+	bool operator==(Event object) {
+		if (this->entryPrice == object.entryPrice) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	bool operator!() {
+		if (this->noStarsOfTheShow == 0) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	Event operator++() {
+		this->entryPrice += 1;
+		return *this;
+	}
+	Event operator++(int) {
+		Event copy = *this;
+		this->entryPrice += 1;
+		return copy;
+	}
+	Event operator-(int n) {
+		Event copy = *this;
+		this->entryPrice -= n;
+		return copy;
+	}
+	string& operator[](int index) {
+		if (index < 0 || index >= this->noStarsOfTheShow) {
+			throw WrongNumberException("Wrong index number");
+		}
+		return this->starsOfTheShow[index];
+	}
+	explicit operator int() {
+		return static_cast<int>(this->entryPrice);
+	}
 
 	friend void operator<<(ostream& console, Event& event);
 	friend void operator>>(istream& console, Event& event);
@@ -390,6 +542,8 @@ public:
 
 void operator<<(ostream& console, Event& event) {
 	console << endl << "Event date: " << event.date.day << "/" << event.date.month << "/" << event.date.year;
+	console << endl << "Event name is: " << event.eventName;
+	console << endl << "Entry price is: " << event.entryPrice;
 	console << endl << "Event type is: " << event.getEventTypeName(event.type);
 	console << endl << "The star(s) of the show is/are: ";
 	for (int i = 0; i < event.noStarsOfTheShow;i++) {
@@ -410,6 +564,14 @@ void operator>>(istream& console, Event& event) {
 	int year;
 	console >> year;
 	event.date.year = year;
+	cout << endl << "Event name: ";
+	char eventName[30];
+	console >> eventName;
+	cout << endl << "Entry price is: ";
+	float price;
+	console >> price;
+	event.entryPrice = price;
+	event.setEventName(eventName);
 	cout << endl << "Event type: ";
 	int type;
 	console >> type;
@@ -448,37 +610,19 @@ void operator>>(istream& console, Event& event) {
 
 class Ticket {
 	int id = 0;
+	char ownerName[30] = "";
 	int seatNumber = 1;
 	int rowNumber = 0;
 	EventLocation location;
 	Zones zone = Zones::NORMAL;
-
 	int* usedIds = nullptr;		//to keep track of already used ID's & ensure uniqueness of new ID's
 	int noUsedIds = 0;
-
 public:
-	//constructors
-	Ticket() {
-	}
-	Ticket(int id, int seatNumber, int rowNumber, const char* venueName, LocationType type, Zones zone)
-		:id(id), seatNumber(seatNumber), rowNumber(rowNumber), location(venueName, type), zone(zone) {
+	//statics
+	static int MIN_NAME_LENGTH;
+	static int MAX_NAME_LENGTH;
 
-	}
-
-	//getters
-	int getId() {
-		return this->id;
-	}
-	int getSeatNumber() {
-		return this->seatNumber;
-	}
-	int getRowNumber() {
-		return this->rowNumber;
-	}
-	EventLocation getEventLocation() {
-		return this->location;
-	}
-
+	//other methods
 	string getZoneName(Zones zone) {	//so we can see the actual names instead of the associated numbers
 		switch (this->zone)
 		{
@@ -502,6 +646,45 @@ public:
 			return "Standing";
 		}
 	}
+	int checkIdUniqueness(int k) {
+		int ok = 1;
+		for (int i = 0; i < this->noUsedIds;i++) {
+			if (k == usedIds[i]) {
+				ok = -1;
+			}
+		}
+		return ok;
+	}
+
+	//constructors
+	Ticket() {
+	}
+	Ticket(int id, const char* ownerName, int seatNumber, int rowNumber): id(id), seatNumber(seatNumber), rowNumber(rowNumber) {
+		this->setOwnerName(ownerName);
+	}
+	Ticket(int id, int seatNumber, int rowNumber, const char* venueName, LocationType type, Zones zone, const char* ownerName)
+		:id(id), seatNumber(seatNumber), rowNumber(rowNumber), location(venueName, type), zone(zone) {
+		this->setOwnerName(ownerName);
+	}
+
+	//getters
+	int getId() {
+		return this->id;
+	}
+	char* getOwnerName() {
+		char* copy = new char[strlen(this->ownerName) + 1];
+		strcpy_s(copy, strlen(this->ownerName) + 1, this->ownerName);
+		return copy;
+	}
+	int getSeatNumber() {
+		return this->seatNumber;
+	}
+	int getRowNumber() {
+		return this->rowNumber;
+	}
+	EventLocation getEventLocation() {
+		return this->location;
+	}
 	Zones getZone() {
 		return this->zone;
 	}
@@ -509,6 +692,12 @@ public:
 	//setters
 	void setZone(Zones zone) {
 		this->zone = zone;
+	}
+	void setOwnerName(const char* name) {
+		if (strlen(name) < Ticket::MIN_NAME_LENGTH || strlen(name) > Ticket::MAX_NAME_LENGTH) {
+			throw WrongNumberException("The name must have between 5 and 30 characters!");
+		}
+		strcpy_s(this->ownerName, strlen(name) + 1, name);
 	}
 	void setSeatNumber(int seatNumber) {
 		if (seatNumber <= 0 || seatNumber > 50) {
@@ -526,17 +715,6 @@ public:
 			this->rowNumber = rowNumber;
 		}
 	}
-
-	int checkIdUniqueness(int k) {
-		int ok = 1;
-		for (int i = 0; i < this->noUsedIds;i++) {
-			if (k == usedIds[i]) {
-				ok = -1;
-			}
-		}
-		return ok;
-	}
-
 	void setId() {
 		int k = rand() % 1000000;
 		while (checkIdUniqueness(k) == -1) {
@@ -547,12 +725,15 @@ public:
 	}
 
 	//copy constructor
-	Ticket(const Ticket& object) {
+	Ticket(const Ticket& object)
+		:id(object.id), seatNumber(object.seatNumber), rowNumber(object.rowNumber), location(object.location), zone(object.zone) {
 		this->usedIds = new int[object.noUsedIds];
 		for (int i = 0; i < object.noUsedIds; i++) {
 			this->usedIds[i] = object.usedIds[i];
 		}
 		this->noUsedIds = object.noUsedIds;
+
+		strcpy_s(this->ownerName, strlen(object.ownerName) + 1, object.ownerName);
 	}
 
 	//destructor
@@ -561,7 +742,6 @@ public:
 	}
 
 	//operators
-
 	void operator=(const Ticket source) {
 		if (&source == this) {
 			return;
@@ -571,7 +751,6 @@ public:
 		this->setSeatNumber(source.seatNumber);
 		this->setZone(source.zone);
 	}
-
 	Ticket operator++(int) {
 		Ticket copy = *this;
 		this->seatNumber += 1;
@@ -588,6 +767,7 @@ public:
 
 void operator<<(ostream& console, Ticket& ticket) {
 	console << endl << "Ticket ID: " << ticket.id;
+	console << endl << "Name is: " << ticket.ownerName;
 	console << endl << "Row number is: " << ticket.rowNumber;
 	console << endl << "Seat number is " << ticket.seatNumber;
 	console << endl << "Zone is: " << ticket.getZoneName(ticket.zone);
@@ -596,6 +776,10 @@ void operator<<(ostream& console, Ticket& ticket) {
 void operator>>(istream& console, Ticket& ticket) {
 	cout << endl << "Your unique ID is being generated: ";
 	ticket.setId();
+	cout << endl << "Enter your name: ";
+	char ownerName[30];
+	console >> ownerName;
+	ticket.setOwnerName(ownerName);
 	cout << endl << "Row number: ";
 	int noRow;
 	console >> noRow;
