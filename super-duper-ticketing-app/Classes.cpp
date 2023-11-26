@@ -751,6 +751,30 @@ public:
 		this->setSeatNumber(source.seatNumber);
 		this->setZone(source.zone);
 	}
+	bool operator==(Ticket object) {
+		if (this->rowNumber == object.rowNumber) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	bool operator<=(Ticket object) {
+		if (this->rowNumber <= object.rowNumber) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	bool operator!() {
+		if (this->noUsedIds == 0) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 	Ticket operator++(int) {
 		Ticket copy = *this;
 		this->seatNumber += 1;
@@ -759,6 +783,20 @@ public:
 	Ticket operator++() {
 		this->seatNumber += 1;
 		return *this;
+	}
+	Ticket operator+(int n) {
+		Ticket copy = *this;
+		this->rowNumber += n;
+		return copy;
+	}
+	int& operator[](int index) {
+		if (index < 0 || index >= this->noUsedIds) {
+			throw WrongNumberException("Wrong index number");
+		}
+		return this->usedIds[index];
+	}
+	explicit operator string() {
+		return static_cast<string>(ownerName);
 	}
 
 	friend void operator<<(ostream& console, Ticket& ticket);
