@@ -81,10 +81,6 @@ public:
 		}
 	}
 
-	void printInfo() {
-
-	}
-
 	//constructors
 	EventLocation() {
 
@@ -97,7 +93,6 @@ public:
 		this->setVenueName(venueName);
 		this->setVenueManager(venueManager);
 	}
-
 
 	//getters
 	float getRentingPrice() {
@@ -354,8 +349,19 @@ public:
 			return "Conference";
 		}
 	}
+	void displayDate() {
+		cout << endl << this->date.day << "/" << this->date.month << "/" << this->date.year;
+	}
 	void printInfo() {
-
+		cout << endl << "Event name is: " << this->eventName;
+		cout << endl << "Event entry price is: " << this->entryPrice;
+		cout << endl << "Event date is: " << this->date.day << "/" << this->date.month << "/" << this->date.year;
+		cout << endl << "Event type is: " << this->getEventTypeName(type);
+		cout << endl << "Event location is: " << this->location.getVenueName();
+		cout << endl << "The star(s) of the show is/are: ";
+		for (int i = 0; i < this->noStarsOfTheShow;i++) {
+			cout << " " << this->starsOfTheShow[i];
+		}
 	}
 
 	//constructors
