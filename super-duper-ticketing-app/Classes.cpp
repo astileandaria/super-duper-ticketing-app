@@ -3,7 +3,7 @@
 #include <string.h>
 using namespace std;
 
-enum LocationType { MOVIE_THEATER = 200, THEATER = 300, CONFERENCE_HALL = 450, STAGE = 800, STADIUM = 1000, ARENA = 3000 };
+enum LocationType { MOVIE_THEATER, THEATER, CONFERENCE_HALL, STAGE, STADIUM, ARENA };
 enum EventType { CONCERT, STAND_UP, FOOTBALL, BASEBALL, MOVIE, THEATER_PLAY, CONFERENCE };
 enum Zones { VIP, NORMAL, STAND1, STAND2, TRIBUNE, CATEGORY1, CATEGORY2, BOX, STANDING };
 
@@ -44,13 +44,12 @@ struct Date {
 
 class EventLocation {
 	char* venueName = nullptr;
-	int maxNoSeats = 0;
 	int noRows = 0;
 	int noSeatsPerRow = 0;
 	LocationType type = LocationType::THEATER;
 
-	//int* availableSeatsOnRow = nullptr;
-	//int noAvailableSeatsOnRow = 0;
+	//int* availableSeatsOnRow = nullptr;	//shows explicitly the free seats' number
+	//int noAvailableSeatsOnRow = 0;	
 	//int** availableSeats = nullptr; //array of pointers to each int* availableSeatsOnRow; noElements = noRows
 
 public:
@@ -73,15 +72,12 @@ public:
 		setVenueName(venueName);
 	}
 	EventLocation(const char* venueName, int maxNoSeats, int noRows, int noSeatsPerRow, LocationType type)
-		: maxNoSeats(maxNoSeats), noRows(noRows), noSeatsPerRow(noSeatsPerRow), type(type) {
+		: noRows(noRows), noSeatsPerRow(noSeatsPerRow), type(type) {
 		setVenueName(venueName);
 	}
 
 
 	//getters
-	int getMaxNoSeats() {
-		return this->maxNoSeats;
-	}
 	int getNoRows() {
 		return this->noRows;
 	}
@@ -130,10 +126,15 @@ public:
 	}
 
 	//setters
-	
-	void setMaxNoSeats(LocationType type) {
-		this->maxNoSeats = (int)type;
+	void setLocationType(LocationType type) {
+		if (type >= 0 && type <= 5) {
+			this->type = type;
+		}
+		else {
+			throw WrongNumberException("That location type is invalid!");
+		}
 	}
+
 	void setNoSeatsPerRows(int noSeatsPerRow) {
 		this->noSeatsPerRow = noSeatsPerRow;
 	}
@@ -174,11 +175,9 @@ public:
 	//}
 
 	//copy constructor
-	EventLocation(const EventLocation& object) {
+	EventLocation(const EventLocation& object):noRows(object.noRows), noSeatsPerRow(object.noSeatsPerRow), type(object.type) {
 		this->venueName = new char[strlen(object.venueName) + 1];
-		for (int i = 0; i < strlen(object.venueName) + 1; i++) {
-			this->venueName[i] = object.venueName[i];
-		}
+		strcpy_s(this->venueName, strlen(object.venueName) + 1, object.venueName);
 	}
 
 	//destructor
@@ -195,7 +194,6 @@ public:
 		this->setVenueName(source.venueName);
 		this->setNoRows(source.noRows);
 		this->setNoSeatsPerRows(source.noSeatsPerRow);
-		this->setMaxNoSeats(source.type);
 	}
 
 	bool operator==(EventLocation object) {
@@ -208,6 +206,7 @@ public:
 	}
 
 	friend void operator<<(ostream& console, EventLocation& eventLocation);
+	friend void operator>>(istream& console, EventLocation& eventLocation);
 };
 
 void operator<<(ostream& console, EventLocation& eventLocation) {
@@ -216,7 +215,27 @@ void operator<<(ostream& console, EventLocation& eventLocation) {
 	console << endl << "Number of rows: "<< eventLocation.noRows;
 	console << endl << "Number of seatsPerRow: " << eventLocation.noSeatsPerRow;
 }
-
+void operator>>(istream& console, EventLocation& eventLocation) {
+	cout << endl << "Venue Name: ";
+	char* venueName;
+	console >> venueName;
+	eventLocation.venueName = venueName;
+	cout << endl << "Number of rows: ";
+	int noRows;
+	console >> noRows;
+	eventLocation.noRows = noRows;
+	cout << endl << "Number of seats per row: ";
+	int noSeatsPerRow;
+	console >> noSeatsPerRow;
+	eventLocation.noSeatsPerRow = noSeatsPerRow;
+	cout << endl << "Location type: ";
+	int type;
+	console >> type;
+	if (type >= 0 && type <= 5) {
+		LocationType type = static_cast<LocationType>(type);
+		eventLocation.type = type;
+	}
+}
 
 class Event {
 	Date date;
@@ -366,6 +385,7 @@ public:
 	}
 
 	friend void operator<<(ostream& console, Event& event);
+	friend void operator>>(istream& console, Event& event);
 };
 
 void operator<<(ostream& console, Event& event) {
@@ -376,7 +396,54 @@ void operator<<(ostream& console, Event& event) {
 		console << " " << event.starsOfTheShow[i];
 	}
 }
-
+void operator>>(istream& console, Event& event) {
+	cout << endl << "Set the date of the event: ";
+	cout << endl << "Day: ";
+	int day;
+	console >> day;
+	event.date.day = day;
+	cout << endl << "Month: ";
+	int month;
+	console >> month;
+	event.date.month = month;
+	cout << endl << "Year: ";
+	int year;
+	console >> year;
+	event.date.year = year;
+	cout << endl << "Event type: ";
+	int type;
+	console >> type;
+	if (type >= 0 && type <= 6) {
+		EventType type = static_cast<EventType>(type);
+		event.type = type;
+	}
+	cout << endl << "Number of stars of the show (performers): ";
+	int noStarsOfTheShow;
+	console >> noStarsOfTheShow;
+	event.noStarsOfTheShow = noStarsOfTheShow;
+	cout << endl << "Names of the performers: ";
+	string* starsOfTheShow;
+	for (int i = 0; i < event.noStarsOfTheShow; i++) {
+		cout << endl << i << ". Input a name: ";
+		string name;
+		console >> name;
+		starsOfTheShow[i] = name;
+		console >> starsOfTheShow[i];
+	}
+	event.starsOfTheShow = starsOfTheShow;
+	cout << endl << "Location: ";
+	cout << endl << "Input the location name: ";
+	char* venueName;
+	console >> venueName;
+	event.location.setVenueName(venueName);
+	cout << endl << "Input the type of the location: ";
+	int locationType;
+	console >> locationType;
+	if (locationType >= 0 && locationType <= 5) {
+		LocationType locationType = static_cast<LocationType>(locationType);
+		event.location.setLocationType(locationType);
+	}
+}
 
 
 class Ticket {
@@ -516,6 +583,7 @@ public:
 	}
 
 	friend void operator<<(ostream& console, Ticket& ticket);
+	friend void operator>>(istream& console, Ticket& ticket);
 };
 
 void operator<<(ostream& console, Ticket& ticket) {
@@ -524,6 +592,38 @@ void operator<<(ostream& console, Ticket& ticket) {
 	console << endl << "Seat number is " << ticket.seatNumber;
 	console << endl << "Zone is: " << ticket.getZoneName(ticket.zone);
 	console << endl << "Location is: " << ticket.location;
+}
+void operator>>(istream& console, Ticket& ticket) {
+	cout << endl << "Your unique ID is being generated: ";
+	ticket.setId();
+	cout << endl << "Row number: ";
+	int noRow;
+	console >> noRow;
+	ticket.rowNumber = noRow;
+	cout << endl << "Seat number: ";
+	int seatNumber;
+	console >> seatNumber;
+	ticket.seatNumber = seatNumber;
+	cout << endl << "Select zone: ";
+	int zone;
+	console >> zone;
+	if (zone >= 0 && zone <= 8) {
+		Zones zone = static_cast<Zones>(zone);
+		ticket.zone = zone;
+	}
+	cout << endl << "Location: ";
+	cout << endl << "Input the location name: ";
+	char* venueName;
+	console >> venueName;
+	ticket.location.setVenueName(venueName);
+	cout << endl << "Input the type of the location: ";
+	int locationType;
+	console >> locationType;
+	if (locationType >= 0 && locationType <= 5) {
+		LocationType locationType = static_cast<LocationType>(locationType);
+		ticket.location.setLocationType(locationType);
+	}
+
 }
 
 int EventLocation::MIN_NAME_LENGTH = 5;
